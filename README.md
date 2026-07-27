@@ -1,12 +1,10 @@
 # FairShare
 
+[![Android CI](https://github.com/Akshay6669/Fairshare/actions/workflows/android.yml/badge.svg)](https://github.com/Akshay6669/Fairshare/actions/workflows/android.yml)
+
 Split shared expenses without losing a cent.
 
 Kotlin · Jetpack Compose · Room · Retrofit · Hilt · Coroutines
-
-<!-- Replace with a screen recording once the UI is running:
-     Android Studio → Running Devices → Record, then convert to GIF -->
-![Screenshot placeholder](docs/screenshot.png)
 
 ---
 
