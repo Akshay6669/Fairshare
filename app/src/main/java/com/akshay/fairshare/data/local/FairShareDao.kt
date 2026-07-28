@@ -32,6 +32,9 @@ interface FairShareDao {
     @Query("SELECT * FROM groups WHERE id = :groupId")
     fun observeGroup(groupId: String): Flow<GroupWithMembers?>
 
+    @Query("SELECT COUNT(*) FROM groups")
+    suspend fun groupCount(): Int
+
     @Transaction
     @Query("SELECT * FROM expenses WHERE groupId = :groupId ORDER BY createdAt DESC")
     fun observeExpenses(groupId: String): Flow<List<ExpenseWithShares>>

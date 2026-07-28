@@ -1,6 +1,8 @@
 package com.akshay.fairshare.data.repository
 
 import com.akshay.fairshare.data.local.FairShareDao
+import com.akshay.fairshare.data.local.GroupEntity
+import com.akshay.fairshare.data.local.MemberEntity
 import com.akshay.fairshare.data.mapper.toDomain
 import com.akshay.fairshare.data.mapper.toDto
 import com.akshay.fairshare.data.mapper.toEntity
@@ -32,6 +34,19 @@ class ExpenseRepository @Inject constructor(
     fun observeExpenses(groupId: String): Flow<List<Expense>> =
         dao.observeExpenses(groupId).map { rows -> rows.map { it.toDomain() } }
 
+    /** Seeds a demo group the first time the app runs on a device; a no-op after that. */
+    suspend fun seedDemoGroupIfEmpty() {
+        if (dao.groupCount() > 0) return
+        dao.upsertGroup(GroupEntity(id = DEMO_GROUP_ID, name = "Trip", updatedAt = System.currentTimeMillis()))
+        dao.upsertMembers(
+            listOf(
+                MemberEntity(id = "demo-alex", groupId = DEMO_GROUP_ID, name = "Alex"),
+                MemberEntity(id = "demo-blair", groupId = DEMO_GROUP_ID, name = "Blair"),
+                MemberEntity(id = "demo-casey", groupId = DEMO_GROUP_ID, name = "Casey"),
+            ),
+        )
+    }
+
     /** Persists immediately, then attempts to push. The local write is never rolled back. */
     suspend fun addExpense(expense: Expense): Result<Unit> {
         dao.saveExpense(expense.toEntity(pendingSync = true), expense.toShareEntities())
@@ -52,5 +67,9 @@ class ExpenseRepository @Inject constructor(
         for (expense in remote) {
             dao.saveExpense(expense.toEntity(pendingSync = false), expense.toShareEntities())
         }
+    }
+
+    companion object {
+        const val DEMO_GROUP_ID = "demo-group"
     }
 }

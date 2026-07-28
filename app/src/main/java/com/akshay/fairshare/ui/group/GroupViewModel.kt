@@ -34,8 +34,14 @@ class GroupViewModel @Inject constructor(
     private val repository: ExpenseRepository,
 ) : ViewModel() {
 
-    private val groupId = "demo-group"
+    private val groupId = ExpenseRepository.DEMO_GROUP_ID
     private val errors = MutableStateFlow<String?>(null)
+
+    init {
+        viewModelScope.launch {
+            repository.seedDemoGroupIfEmpty()
+        }
+    }
 
     val state: StateFlow<GroupUiState> = combine(
         repository.observeGroup(groupId),
